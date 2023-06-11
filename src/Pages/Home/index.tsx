@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
-import { getProducts } from "../../services/products";
+import { getProductsByCategory } from "../../services/products";
 import { ProductsList } from "../../components/productsList/ProductsList";
 import { Product } from "../../models/product";
 import { ProductDetail } from "../../components/ProductDetail";
+import { useParams } from "react-router-dom";
 
 function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  const { category } = useParams<{ category: string }>();
+  let categoryId:string = category! as string; //evitar error de undefined
+
   useEffect(() => {
     setLoading(true);
-    getProducts()
+    getProductsByCategory(categoryId)
       .then((data) => {
         setProducts(data);
         setLoading(false);
@@ -21,7 +25,7 @@ function Home() {
         setError(true);
         setLoading(false);
       });
-  }, []);
+  }, [categoryId]);
 
   if (loading) {
     return <p>Loading...</p>;

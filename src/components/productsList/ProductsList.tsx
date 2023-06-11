@@ -7,6 +7,7 @@ function ProductsList({ products, addToCartButton }: { products: Product[], addT
     <div className="products-list">
       {products.map((product) => (
         <ProductCard 
+          key={product.id}
           product={product}
           addToCartButton={addToCartButton}
         />

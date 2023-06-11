@@ -13,6 +13,7 @@ import { ProductsProvider } from "../../context/productsContext";
 
 let routes: Routes[] = [
   { path: "/", element: <Home /> },
+  { path: "/category/:category", element: <Home />},
   { path: "/my-orders", element: <MyOrders /> },
   { path: "/my-account", element: <MyAccount /> },
   { path: "/sign-in", element: <SingIn /> },
