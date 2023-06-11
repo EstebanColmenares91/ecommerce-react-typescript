@@ -1,7 +1,5 @@
-function Layout({children}: {children: React.ReactNode}) {
-  return (
-    <div className="mt-4 bg-red-100 h-screen">{children}</div>
-  )
+function Layout({ children }: { children: React.ReactNode }) {
+  return <main className="mt-4 w-4/5 m-auto">{children}</main>;
 }
 
-export { Layout }
+export { Layout };

@@ -1,0 +1,4 @@
+.product-detail {
+    height: calc(100% - 68px);
+    width: 250px;
+}

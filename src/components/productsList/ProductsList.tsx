@@ -1,18 +1,14 @@
-import { Product } from "../../services/products";
 import { ProductCard } from "../Product";
+import { Product } from "../../models/product";
+import "./style.css";
 
-function ProductsList({ products }: { products: Product[] }) {
+function ProductsList({ products, addToCartButton }: { products: Product[], addToCartButton: boolean}) {
   return (
-    <div>
+    <div className="products-list">
       {products.map((product) => (
         <ProductCard 
-          id={product.id} 
-          key={product.id} 
-          title={product.title} 
-          price={product.price} 
-          images={product.images} 
-          description={product.description}
-          // category={product.category}
+          product={product}
+          addToCartButton={addToCartButton}
         />
       ))}
     </div>

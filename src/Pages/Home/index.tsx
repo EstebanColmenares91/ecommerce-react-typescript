@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getProducts } from "../../services/products";
-import { Product } from "../../services/products";
 import { ProductsList } from "../../components/productsList/ProductsList";
+import { Product } from "../../models/product";
+import { ProductDetail } from "../../components/ProductDetail";
 
 function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -10,15 +11,16 @@ function Home() {
 
   useEffect(() => {
     setLoading(true);
-    getProducts().then((data) => {
-      setProducts(data);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.log(error)
-      setError(true);
-      setLoading(false);
-    });
+    getProducts()
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
@@ -30,9 +32,11 @@ function Home() {
   }
 
   return (
-    <>
-      <ProductsList products={products} />
-    </>
+    <div className="flex gap-1">
+      <ProductsList products={products} addToCartButton={true}
+      />
+      <ProductDetail></ProductDetail>
+    </div>
   );
 }
 
