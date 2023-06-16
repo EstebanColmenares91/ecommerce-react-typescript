@@ -1,31 +1,17 @@
-import { useEffect, useState } from "react";
-import { getProductsByCategory } from "../../services/products";
+import { getAllProducts, getProductsByCategory } from "../../services/products";
 import { ProductsList } from "../../components/productsList/ProductsList";
-import { Product } from "../../models/product";
 import { ProductDetail } from "../../components/ProductDetail";
 import { useParams } from "react-router-dom";
+import { useFetchProducts } from "../../hooks/useProducts";
 
 function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
   const { category } = useParams<{ category: string }>();
   let categoryId:string = category! as string; //evitar error de undefined
 
-  useEffect(() => {
-    setLoading(true);
-    getProductsByCategory(categoryId)
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setError(true);
-        setLoading(false);
-      });
-  }, [categoryId]);
+  const { products, loading , error } = useFetchProducts(
+    categoryId,
+    categoryId ? getProductsByCategory : getAllProducts
+  );
 
   if (loading) {
     return <p>Loading...</p>;
@@ -37,9 +23,11 @@ function Home() {
 
   return (
     <div className="flex gap-1">
-      <ProductsList products={products} addToCartButton={true}
+      <ProductsList 
+        products={products} 
+        addToCartButton={true}
       />
-      <ProductDetail></ProductDetail>
+      <ProductDetail/>
     </div>
   );
 }
