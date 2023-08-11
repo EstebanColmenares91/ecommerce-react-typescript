@@ -1,80 +1,110 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useReducer } from "react";
 import { Product } from "../models/product";
+import { ProductsContextProps, initialState, actionTypes } from "./contextInterface";
 
-interface ProductsContextProps {
-  shoppingCart: Product[];
-  shoppingCartTotal: number;
-  shoppingCartLength: number;
-  addProductToCart: (product: Product) => void;
-  removeProductFromCart: (productId: number) => void;
-  onClose: () => void;
-  open: boolean;
-  productDetailOpened: (product: Product) => void;
-  productDetail: Product | null;
+type ReducerObject = {
+  [key: string]: (state: ProductsContextProps, payload: any) => ProductsContextProps;
 }
 
-const ProductsContext = createContext<ProductsContextProps>({
-  shoppingCart: [],
-  shoppingCartTotal: 0,
-  shoppingCartLength: 0,
-  addProductToCart: () => {},
-  removeProductFromCart: () => {},
-  onClose: () => {},
-  open: false,
-  productDetailOpened: () => {},
-  productDetail: null,
-});
+const reducerObject: ReducerObject = {
+  [actionTypes.ADD_PRODUCT_TO_CART]: (state, payload) => {
+    const stateCopy = [...state.shoppingCart];
+    const index = stateCopy.findIndex((p) => p.id === payload.id);
+    
+    if (index !== -1) {
+      return state;
+    }
+
+    stateCopy.push(payload);
+    return {
+      ...state,
+      shoppingCart: stateCopy,
+      shoppingCartLength: stateCopy.length,
+      shoppingCartTotal: stateCopy.reduce((acc, product) => {
+        return acc + product.price;
+      }, 0),
+    };
+  },
+
+  [actionTypes.REMOVE_PRODUCT_FROM_CART]: (state, payload) => {
+    const stateCopy = [...state.shoppingCart];
+    const index = stateCopy.findIndex((product) => product.id === payload);
+    stateCopy.splice(index, 1);
+    return {
+      ...state,
+      shoppingCart: stateCopy,
+      shoppingCartLength: stateCopy.length,
+      shoppingCartTotal: stateCopy.reduce((acc, product) => {
+        return acc + product.price;
+      }, 0),
+    };
+  },
+
+  [actionTypes.CLOSE]: (state) => {
+    return {
+      ...state,
+      open: false,
+    };
+  },
+
+  [actionTypes.PRODUCT_DETAIL_OPENED]: (state, payload) => {
+    return {
+      ...state,
+      productDetail: payload,
+      open: true,
+    };
+  },
+};
+
+const reducer = (state: ProductsContextProps, action: any) => {
+  const reducerFn = reducerObject[action.type];
+  return reducerFn ? reducerFn(state, action.payload) : state;
+};
+
+const ProductsContext = createContext<ProductsContextProps>(initialState);
 
 const ProductsProvider = ({ children }: { children: React.ReactNode }) => {
-  const [shoppingCart, setShoppingCart] = useState<Product[]>([]);
-  const [productDetail, setProductDetail] = useState<Product | null>(null);
-  const [open, setOpen] = React.useState(false);
-  const onClose = () => setOpen(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
-  const productDetailOpened = (product: Product) => {
-    setProductDetail(product);
-    setOpen(true);
-  };
-
-  const shoppingCartLength = shoppingCart.length;
-
-  const shoppingCartTotal = shoppingCart.reduce((acc, product) => {
-    return acc + product.price;
-  }, 0);
-
+  //Action creators
   const addProductToCart = (product: Product) => {
-    const stateCopy = [...shoppingCart];
-    // no duplicates
-    //evaluates if the product already exists if it's not true returns -1 
-    const index = stateCopy.findIndex((p) => p.id === product.id);
-    console.log(index);
-    if (index === -1) {
-      stateCopy.push(product);
-      setShoppingCart([...stateCopy]);
-    }
+    dispatch({ type: actionTypes.ADD_PRODUCT_TO_CART, payload: product });
+  }
+  
+  const removeProductFromCart = (productId: number) => {
+    dispatch({ type: actionTypes.REMOVE_PRODUCT_FROM_CART, payload: productId });
+  }
+  
+  const onClose = () => {
+    dispatch({ type: actionTypes.CLOSE, payload: null });
+  }
+  
+  const productDetailOpened = (product: Product) => {
+    dispatch({ type: actionTypes.PRODUCT_DETAIL_OPENED, payload: product });
+  }
+
+  const shoppingCartStates = {
+    shoppingCart: state.shoppingCart,
+    shoppingCartTotal: state.shoppingCartTotal,
+    shoppingCartLength: state.shoppingCartLength,
+    open: state.open,
+    productDetail: state.productDetail,
   };
 
-  const removeProductFromCart = (productId: number) => {
-    const stateCopy = [...shoppingCart];
-    const index = stateCopy.findIndex((product) => product.id === productId);
-    stateCopy.splice(index, 1);
-    setShoppingCart([...stateCopy]);
+  const shoppingCartActions = {
+    addProductToCart,
+    removeProductFromCart,
+    onClose,
+    productDetailOpened,
+  };
+
+  const value = {
+    ...shoppingCartStates,
+    ...shoppingCartActions,
   };
 
   return (
-    <ProductsContext.Provider
-      value={{
-        shoppingCart,
-        shoppingCartTotal,
-        shoppingCartLength,
-        addProductToCart,
-        removeProductFromCart,
-        onClose,
-        open,
-        productDetailOpened,
-        productDetail,
-      }}
-    >
+    <ProductsContext.Provider value={value}>
       {children}
     </ProductsContext.Provider>
   );

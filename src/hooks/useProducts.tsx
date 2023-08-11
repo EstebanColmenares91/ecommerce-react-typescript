@@ -35,7 +35,7 @@ export function useFetchProducts(
       .catch((error) => {
         setErrorAction(error);
       });
-  }, [categoryId]);
+  }, [categoryId, callback]);
 
   return { products, loading, error };
 }

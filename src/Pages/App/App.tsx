@@ -5,18 +5,20 @@ import { MyAccount } from "../MyAccount";
 import { NotFound } from "../NotFound";
 import { SingIn } from "../Signin";
 import { useRoutes, BrowserRouter } from "react-router-dom";
-import { Routes } from "../../models/Routes";
+import { Routes } from "../../models/route";
 import { Navbar } from "../../components/Navbar";
 import { Layout } from "../../components/layout";
 import { ProductsProvider } from "../../context/productsContext";
+import { SingUp } from "../Singup";
 
 
-let routes: Routes[] = [
+const routes: Routes[] = [
   { path: "/", element: <Home /> },
   { path: "/category/:category", element: <Home />},
   { path: "/my-orders", element: <MyOrders /> },
   { path: "/my-account", element: <MyAccount /> },
   { path: "/sign-in", element: <SingIn /> },
+  { path: "/sign-up", element: <SingUp /> },
   { path: "*", element: <NotFound /> },
 ];
 

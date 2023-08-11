@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavItem } from "../NavItem";
-import { ProductsContext } from "../../context/productsContext";
 import { getAllCategories } from "../../services/products";
 import { Category } from "../../models/category";
 
 function Navbar() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const { shoppingCartLength } = useContext(ProductsContext);
 
   useEffect(() => {
     getAllCategories()
@@ -30,6 +28,10 @@ function Navbar() {
     {
       title: "Sign In",
       redirectTo: "/sign-in",
+    },
+    {
+      title: "Sign Up",
+      redirectTo: "/sign-up",
     },
   ];
 

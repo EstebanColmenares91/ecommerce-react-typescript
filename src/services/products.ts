@@ -32,7 +32,7 @@ export const getAllProducts = async (): Promise<Product[]> => {
 };
 
 export const getProductsByCategory = async (
-  categoryId: string = "1"
+  categoryId = "1"
 ): Promise<Product[]> => {
   const response = await fetch(
     `${API_URL_BASE}/categories/${categoryId}/products`

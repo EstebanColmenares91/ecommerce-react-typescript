@@ -8,7 +8,7 @@ function NavItem({
   title: string;
   redirectTo: string;
   activeStyle?: string;
-}) {
+}): JSX.Element {
   return (
     <li>
       <NavLink 
